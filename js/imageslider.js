@@ -4,6 +4,7 @@ function ImageSlider(selector){
   this.images = null;
   this.currentIndex = -1;
   this.imageWidth = 0;
+  this.indexItems = null;
 
   this.init(selector);
   this.initImages();
@@ -15,6 +16,7 @@ ImageSlider.prototype.init = function(selector){
   this.imageSlider = $(selector);
   this.images = this.imageSlider.find('.image-list .image-wrap');
   this.imageWidth = this.imageSlider.find('.slider-body').width();
+  this.indexItems = this.imageSlider.find('.index-nav li a');
 };
 
 ImageSlider.prototype.initImages = function(selector){
@@ -30,9 +32,17 @@ ImageSlider.prototype.initEvent = function(){
   this.imageSlider.find('.slider-btn-prev').on("click", function(){
     objThis.prevImage();
   });
-
   this.imageSlider.find('.slider-btn-next').on("click", function(){
     objThis.nextImage();
+  });
+
+  this.indexItems.on("mouseenter", function(){
+    var index = objThis.indexItems.index(this);
+    if(objThis.currentIndex > index){
+      objThis.showImageAt(index, "prev");
+    } else {
+      objThis.showImageAt(index, "next");
+    }
   });
 };
 
@@ -66,7 +76,7 @@ ImageSlider.prototype.showImageAt = function(index, direction){
     currentImage.stop().animate({
       left: currentEndLeft,
       opacity: 0
-    }, 5300, "easeOutQuint");
+    }, 300, "easeOutQuint");
     newImage.css({
       left: nextStartLeft,
       opacity: 0
@@ -74,7 +84,7 @@ ImageSlider.prototype.showImageAt = function(index, direction){
     newImage.stop().animate({
       left: 0,
       opacity: 1
-    }, 5300, 'easeOutQuint');
+    }, 300, 'easeOutQuint');
   } else {
     currentImage.css({
       opacity: 0.0
@@ -84,5 +94,13 @@ ImageSlider.prototype.showImageAt = function(index, direction){
       opacity: 1
     });
   }
+  this.selectIndexAt(index);
   this.currentIndex = index;
+};
+
+ImageSlider.prototype.selectIndexAt = function(index){
+  if(this.currentIndex != -1){
+    this.indexItems.removeClass('select');
+  }
+  this.indexItems.eq(index).addClass('select');
 };
