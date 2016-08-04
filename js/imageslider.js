@@ -5,11 +5,14 @@ function ImageSlider(selector){
   this.currentIndex = -1;
   this.imageWidth = 0;
   this.indexItems = null;
+  this.timerID = 0;
+  this.autoPlayDelayTime = 2000;
 
   this.init(selector);
   this.initImages();
   this.initEvent();
   this.showImageAt(0);
+  this.startAutoPlay();
 };
 
 ImageSlider.prototype.init = function(selector){
@@ -43,6 +46,13 @@ ImageSlider.prototype.initEvent = function(){
     } else {
       objThis.showImageAt(index, "next");
     }
+  });
+
+  this.imageSlider.on("mouseenter", function(){
+    objThis.stopAutoPlay();
+  });
+  this.imageSlider.on("mouseleave", function(){
+    objThis.startAutoPlay();
   });
 };
 
@@ -103,4 +113,20 @@ ImageSlider.prototype.selectIndexAt = function(index){
     this.indexItems.removeClass('select');
   }
   this.indexItems.eq(index).addClass('select');
+};
+
+ImageSlider.prototype.startAutoPlay = function(){
+  var objThis = this;
+  if(this.timerID == 0){
+    this.timerID = setInterval(function(){
+      objThis.nextImage();
+    },this.autoPlayDelayTime);
+  }
+};
+
+ImageSlider.prototype.stopAutoPlay = function(){
+  if(this.timerID != 0){
+    this.timerID = clearInterval(this.timerID);
+    this.timerID = 0;
+  }
 };
